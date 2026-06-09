@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="continue.dev">
   <diagram name="bindService调用流程" id="bindservice-flow">
-    <mxGraphModel dx="2616" dy="3022" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="2400" math="0" shadow="0">
+    <mxGraphModel dx="2657" dy="3046" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="2400" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -38,13 +38,18 @@
           <mxGeometry height="30" width="280" x="60" y="250" as="geometry" />
         </mxCell>
         <mxCell id="step1_node" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;verticalAlign=top;" value="&lt;b&gt;ContextImpl.bindService()&lt;/b&gt;&lt;br&gt;&lt;i&gt;frameworks/base/core/java/android/app/ContextImpl.java&lt;/i&gt;&lt;br&gt;&lt;hr&gt;&lt;font face=&#39;monospace&#39; size=&#39;2&#39;&gt;@Override&lt;br&gt;public boolean bindService(&lt;br&gt;  Intent service,&lt;br&gt;  ServiceConnection conn,&lt;br&gt;  int flags&lt;br&gt;) {&lt;br&gt;  return bindServiceCommon(&lt;br&gt;    service, conn, flags, ...);&lt;br&gt;}&lt;/font&gt;" vertex="1">
-          <mxGeometry height="160" width="300" x="60" y="290" as="geometry" />
+          <mxGeometry height="190" width="300" x="60" y="291" as="geometry" />
         </mxCell>
         <mxCell id="step1b_node" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;verticalAlign=top;" value="&lt;b&gt;ContextImpl.bindServiceCommon()&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;font face=&#39;monospace&#39; size=&#39;2&#39;&gt;// 获取 IServiceConnection Binder&lt;br&gt;IServiceConnection sd = &lt;br&gt;  mPackageInfo.getServiceDispatcher(&lt;br&gt;    conn, getOuterContext(),&lt;br&gt;    mMainThread.getHandler(), flags&lt;br&gt;  );&lt;br&gt;// 调用 AMS 跨进程&lt;br&gt;int res = ActivityManager.&lt;br&gt;  getService().bindService(&lt;br&gt;    mMainThread.getApplicationThread(),&lt;br&gt;    getActivityToken(), service,&lt;br&gt;    sd, flags, ...);&lt;/font&gt;" vertex="1">
-          <mxGeometry height="200" width="300" x="60" y="465" as="geometry" />
+          <mxGeometry height="255" width="300" x="60" y="481" as="geometry" />
         </mxCell>
         <mxCell id="arrow1" edge="1" parent="1" source="step1b_node" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#d32f2f;strokeWidth=3;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="step2_ams">
           <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pkxAI9JyzDpmVEO5hpYX-1" connectable="0" parent="arrow1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="&lt;b&gt;⬅️ Binder IPC ➡️&lt;/b&gt;&lt;br&gt;AMP.bindService()" vertex="1">
+          <mxGeometry relative="1" x="-0.3187" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="arrow1_label" connectable="0" parent="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;fontColor=#d32f2f;" value="&lt;b&gt;AMP.bindService()&lt;br&gt;跨进程Binder调用&lt;/b&gt;" vertex="1">
           <mxGeometry relative="1" x="370" y="510" as="geometry">
@@ -72,10 +77,15 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="step5_at" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;verticalAlign=top;" value="&lt;b&gt;ActivityThread.handleCreateService()&lt;/b&gt;&lt;br&gt;&lt;i&gt;frameworks/base/core/java/android/app/ActivityThread.java&lt;/i&gt;&lt;br&gt;&lt;hr&gt;&lt;font face=&#39;monospace&#39; size=&#39;2&#39;&gt;case CREATE_SERVICE:&lt;br&gt;  handleCreateService(&lt;br&gt;    (CreateServiceData)msg.obj&lt;br&gt;  );&lt;br&gt;// ↓ 反射创建 Service 实例&lt;br&gt;// ↓ service.attach(...)&lt;br&gt;// ↓ service.onCreate()&lt;/font&gt;" vertex="1">
-          <mxGeometry height="150" width="300" x="820" y="830" as="geometry" />
+          <mxGeometry height="150" width="300" x="972" y="805" as="geometry" />
         </mxCell>
         <mxCell id="arrow5" edge="1" parent="1" source="step5_at" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#d32f2f;strokeWidth=3;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="step6_sendBind">
           <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pkxAI9JyzDpmVEO5hpYX-2" connectable="0" parent="arrow5" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="&lt;b&gt;⬅️ Binder IPC ➡️&lt;/b&gt;&lt;br&gt;ATP.scheduleCreateService()&lt;br&gt;ATP.scheduleBindService()" vertex="1">
+          <mxGeometry relative="1" x="-0.0626" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="step6_sendBind" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=left;verticalAlign=top;" value="&lt;b&gt;ActiveServices.sendServiceArgsLocked()&lt;/b&gt;&lt;br&gt;&lt;i&gt;然后 realStartServiceLocked 继续...&lt;/i&gt;&lt;br&gt;&lt;hr&gt;&lt;font face=&#39;monospace&#39; size=&#39;2&#39;&gt;// Service.onCreate 完成后&lt;br&gt;// AMS 下发 BIND_SERVICE 指令&lt;br&gt;app.thread.&lt;br&gt;  scheduleBindService(...)&lt;/font&gt;" vertex="1">
           <mxGeometry height="100" width="330" x="420" y="1000" as="geometry" />
@@ -89,13 +99,18 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="step7_handleBind" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;verticalAlign=top;" value="&lt;b&gt;ActivityThread.handleBindService()&lt;/b&gt;&lt;br&gt;&lt;i&gt;frameworks/base/core/java/android/app/ActivityThread.java&lt;/i&gt;&lt;br&gt;&lt;hr&gt;&lt;font face=&#39;monospace&#39; size=&#39;2&#39;&gt;case BIND_SERVICE:&lt;br&gt;  handleBindService(&lt;br&gt;    (BindServiceData)msg.obj&lt;br&gt;  );&lt;br&gt;// ↓&lt;br&gt;IBinder binder = &lt;br&gt;  s.onBind(data.intent);&lt;br&gt;// ★ 这里调用 onBind！&lt;/font&gt;" vertex="1">
-          <mxGeometry height="170" width="300" x="820" y="1000" as="geometry" />
+          <mxGeometry height="170" width="300" x="972" y="1000" as="geometry" />
         </mxCell>
         <mxCell id="highlight_onbind" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#b71c1c;fontSize=12;shadow=1;" value="&lt;b style=&quot;font-size:14px&quot;&gt;🔑 Service.onBind()&lt;/b&gt;&lt;br&gt;&lt;font face=&quot;monospace&quot; size=&quot;3&quot; color=&quot;#b71c1c&quot;&gt;返回 IBinder 对象&lt;/font&gt;" vertex="1">
-          <mxGeometry height="50" width="280" x="830" y="1190" as="geometry" />
+          <mxGeometry height="50" width="280" x="982" y="1190" as="geometry" />
         </mxCell>
         <mxCell id="arrow7" edge="1" parent="1" source="step7_handleBind" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2e7d32;strokeWidth=3;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="step8_publish">
           <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pkxAI9JyzDpmVEO5hpYX-3" connectable="0" parent="arrow7" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="&lt;b&gt;⬅️ Binder IPC ➡️&lt;/b&gt;&lt;br&gt;AMP.publishService()&lt;br&gt;IServiceConnection.connected()" vertex="1">
+          <mxGeometry relative="1" x="0.0168" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="arrow7_label" connectable="0" parent="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#2e7d32;" value="&lt;b&gt;AMP.publishService()&lt;br&gt;(回传 IBinder 给 AMS)&lt;/b&gt;" vertex="1">
           <mxGeometry relative="1" x="755" y="1120" as="geometry">
@@ -125,23 +140,14 @@
         <mxCell id="final_consume" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=12;shadow=1;" value="&lt;b style=&quot;font-size:15px&quot;&gt;🏁 ServiceConnection.onServiceConnected()&lt;/b&gt;&lt;br&gt;&lt;i&gt;android.content.ServiceConnection&lt;/i&gt;&lt;br&gt;&lt;hr&gt;&lt;b&gt;客户端开发者传入的回调！&lt;/b&gt;&lt;br&gt;第二个参数 &lt;code&gt;IBinder service&lt;/code&gt; 就是&lt;br&gt;Service.onBind() 返回的那个 IBinder&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#b71c1c&quot;&gt;← 这就是 IBinder 的最终消费者&lt;/font&gt;" vertex="1">
           <mxGeometry height="150" width="310" x="50" y="1480" as="geometry" />
         </mxCell>
-        <mxCell id="summary_box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#263238;strokeColor=#000000;fontColor=#eceff1;fontSize=11;align=left;verticalAlign=top;" value="&lt;b style=&quot;font-size:14px&quot;&gt;📋 核心调用链路总结&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;font face=&quot;monospace&quot; size=&quot;2&quot;&gt;&lt;b&gt;客户端:&lt;/b&gt; ContextImpl.bindService()&lt;br&gt;  → bindServiceCommon()&lt;br&gt;  → getServiceDispatcher() 封装 ServiceConnection&lt;br&gt;  → AMP.bindService() &lt;b&gt;[跨进程]&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;b&gt;AMS:&lt;/b&gt; AMS.bindService()&lt;br&gt;  → ActiveServices.bindServiceLocked()&lt;br&gt;  → bringUpServiceLocked()&lt;br&gt;  → realStartServiceLocked()&lt;br&gt;  → app.thread.scheduleCreateService() &lt;b&gt;[跨进程]&lt;/b&gt;&lt;br&gt;  → app.thread.scheduleBindService() &lt;b&gt;[跨进程]&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;b&gt;服务端:&lt;/b&gt; ActivityThread.handleCreateService()&lt;br&gt;  → service.onCreate()&lt;br&gt;  → ActivityThread.handleBindService()&lt;br&gt;  → &lt;b&gt;service.onBind() → 返回 IBinder&lt;/b&gt;&lt;br&gt;  → AMP.publishService() &lt;b&gt;[跨进程]&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;b&gt;AMS:&lt;/b&gt; ActiveServices.publishServiceLocked()&lt;br&gt;  → c.conn.connected(name, binder) &lt;b&gt;[跨进程]&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;b&gt;客户端:&lt;/b&gt; ServiceDispatcher.connected()&lt;br&gt;  → doConnected() (主线程)&lt;br&gt;  → &lt;b&gt;ServiceConnection.onServiceConnected(name, IBinder)&lt;/b&gt; ← 消费&lt;/font&gt;" vertex="1">
+        <mxCell id="summary_box" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#263238;strokeColor=#000000;fontColor=#eceff1;fontSize=11;align=left;verticalAlign=top;fillStyle=auto;" value="&lt;b style=&quot;font-size:14px&quot;&gt;📋 核心调用链路总结&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;font face=&quot;monospace&quot; size=&quot;2&quot;&gt;&lt;b&gt;客户端:&lt;/b&gt; ContextImpl.bindService()&lt;br&gt;  → bindServiceCommon()&lt;br&gt;  → getServiceDispatcher() 封装 ServiceConnection&lt;br&gt;  → AMP.bindService() &lt;b&gt;[跨进程]&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;b&gt;AMS:&lt;/b&gt; AMS.bindService()&lt;br&gt;  → ActiveServices.bindServiceLocked()&lt;br&gt;  → bringUpServiceLocked()&lt;br&gt;  → realStartServiceLocked()&lt;br&gt;  → app.thread.scheduleCreateService() &lt;b&gt;[跨进程]&lt;/b&gt;&lt;br&gt;  → app.thread.scheduleBindService() &lt;b&gt;[跨进程]&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;b&gt;服务端:&lt;/b&gt; ActivityThread.handleCreateService()&lt;br&gt;  → service.onCreate()&lt;br&gt;  → ActivityThread.handleBindService()&lt;br&gt;  → &lt;b&gt;service.onBind() → 返回 IBinder&lt;/b&gt;&lt;br&gt;  → AMP.publishService() &lt;b&gt;[跨进程]&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;b&gt;AMS:&lt;/b&gt; ActiveServices.publishServiceLocked()&lt;br&gt;  → c.conn.connected(name, binder) &lt;b&gt;[跨进程]&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;b&gt;客户端:&lt;/b&gt; ServiceDispatcher.connected()&lt;br&gt;  → doConnected() (主线程)&lt;br&gt;  → &lt;b&gt;ServiceConnection.onServiceConnected(name, IBinder)&lt;/b&gt; ← 消费&lt;/font&gt;" vertex="1">
           <mxGeometry height="420" width="440" x="440" y="1300" as="geometry" />
         </mxCell>
-        <mxCell id="bridge1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffebee;strokeColor=#d32f2f;fontSize=9;rotation=-90;align=center;" value="&lt;b&gt;⬅️ Binder IPC ➡️&lt;/b&gt;&lt;br&gt;AMP.bindService()" vertex="1">
-          <mxGeometry height="370" width="30" x="380" y="290" as="geometry" />
+        <mxCell id="note1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8eaf6;strokeColor=#3f51b5;fontSize=11;align=left;verticalAlign=top;" value="&lt;b&gt;💡 关键类说明&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;b&gt;AMP = ActivityManagerProxy&lt;/b&gt; (IActivityManager 的 Proxy)&lt;br&gt;→ 客户端的 AMS Binder 代理&lt;br&gt;&lt;br&gt;&lt;b&gt;ATP = ApplicationThreadProxy&lt;/b&gt; (IApplicationThread 的 Proxy)&lt;br&gt;→ AMS 调用 App 进程的 Binder 代理&lt;br&gt;&lt;br&gt;&lt;b&gt;IServiceConnection&lt;/b&gt;&lt;br&gt;→ ServiceDispatcher.InnerConnection (Binder 实体)&lt;br&gt;→ 用于 AMS 回调客户端 onServiceConnected&lt;br&gt;&lt;br&gt;&lt;b&gt;ServiceDispatcher&lt;/b&gt;&lt;br&gt;→ LoadedApk 内部类&lt;br&gt;→ 封装 ServiceConnection + 主线程调度&lt;br&gt;&lt;br&gt;&lt;b&gt;ActiveServices&lt;/b&gt;&lt;br&gt;→ AMS 的成员 mServices&lt;br&gt;→ 管理所有 Service 生命周期&lt;/font&gt;" vertex="1">
+          <mxGeometry height="260" width="310" x="920" y="1300" as="geometry" />
         </mxCell>
-        <mxCell id="bridge2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffebee;strokeColor=#d32f2f;fontSize=9;rotation=-90;align=center;" value="&lt;b&gt;⬅️ Binder IPC ➡️&lt;/b&gt;&lt;br&gt;ATP.scheduleCreateService()&lt;br&gt;ATP.scheduleBindService()" vertex="1">
-          <mxGeometry height="300" width="30" x="780" y="830" as="geometry" />
-        </mxCell>
-        <mxCell id="bridge3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontSize=9;rotation=-90;align=center;" value="&lt;b&gt;⬅️ Binder IPC ➡️&lt;/b&gt;&lt;br&gt;AMP.publishService()&lt;br&gt;IServiceConnection.connected()" vertex="1">
-          <mxGeometry height="280" width="30" x="680" y="1000" as="geometry" />
-        </mxCell>
-        <mxCell id="note1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8eaf6;strokeColor=#3f51b5;fontSize=11;align=left;verticalAlign=top;" value="&lt;b&gt;💡 关键类说明&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;b&gt;AMP = ActivityManagerProxy&lt;/b&gt; (IActivityManager 的 Proxy)&lt;br&gt;→ 客户端的 AMS Binder 代理&lt;br&gt;&lt;br&gt;&lt;b&gt;ATP = ApplicationThreadProxy&lt;/b&gt; (IApplicationThread 的 Proxy)&lt;br&gt;→ AMS 调用 App 进程的 Binder 代理&lt;br&gt;&lt;br&gt;&lt;b&gt;IServiceConnection&lt;/b&gt;&lt;br&gt;→ ServiceDispatcher.InnerConnection (Binder 实体)&lt;br&gt;→ 用于 AMS 回调客户端 onServiceConnected&lt;br&gt;&lt;br&gt;&lt;b&gt;ServiceDispatcher&lt;/b&gt;&lt;br&gt;→ LoadedApk 内部类&lt;br&gt;→ 封装 ServiceConnection + 主线程调度&lt;br&gt;&lt;br&gt;&lt;b&gt;ActiveServices&lt;/b&gt;&lt;br&gt;→ AMS 的成员 mServices&lt;br&gt;→ 管理所有 Service 生命周期&lt;/font&gt;" vertex="1">
-          <mxGeometry height="250" width="310" x="920" y="1300" as="geometry" />
-        </mxCell>
-        <mxCell id="note2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8eaf6;strokeColor=#3f51b5;fontSize=11;align=left;verticalAlign=top;" value="&lt;b&gt;🔍 核心源码路径&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;font face=&quot;monospace&quot; size=&quot;2&quot;&gt;frameworks/base/core/java/android/app/&lt;br&gt;├── ContextImpl.java&lt;br&gt;├── ActivityThread.java&lt;br&gt;├── LoadedApk.java&lt;br&gt;└── ActivityManager.java (AMP)&lt;br&gt;&lt;br&gt;frameworks/base/services/core/java/&lt;br&gt;  com/android/server/am/&lt;br&gt;├── ActivityManagerService.java&lt;br&gt;├── ActiveServices.java&lt;br&gt;└── ServiceRecord.java&lt;/font&gt;" vertex="1">
-          <mxGeometry height="200" width="310" x="920" y="1570" as="geometry" />
+        <mxCell id="note2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8eaf6;strokeColor=#3f51b5;fontSize=11;align=left;verticalAlign=top;" value="&lt;b&gt;🔍 核心源码路径&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;font face=&quot;monospace&quot; size=&quot;2&quot;&gt;frameworks/base/core/java/android/app/&lt;br&gt;├── ContextImpl.java&lt;br&gt;├── ActivityThread.java&lt;br&gt;├── LoadedApk.java&lt;br&gt;└── ActivityManager.java (AMP)&lt;br&gt;&lt;br&gt;frameworks/base/services/core/java/&lt;br&gt;  com/android/server/am/&lt;br&gt;├── ActivityManagerService.java&lt;br&gt;├── ActiveServices.java&lt;br&gt;└── ServiceRecord.java&lt;/font&gt;" vertex="1">
+          <mxGeometry height="220" width="310" x="920" y="1570" as="geometry" />
         </mxCell>
         <mxCell id="timing" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8eaf6;strokeColor=#3f51b5;fontSize=11;align=left;verticalAlign=top;" value="&lt;b&gt;⏱️ 线程模型&lt;/b&gt;&lt;br&gt;&lt;hr&gt;🔴 Binder 线程: AMP/ATP 调用&lt;br&gt;🟢 主线程: Service.onCreate / onBind / ServiceConnection 回调&lt;br&gt;🟡 AMS 线程: ActiveServices 各方法 (synchronized 锁)&lt;br&gt;&lt;br&gt;ServiceConnection.onServiceConnected()&lt;br&gt;通过 Handler 切到主线程执行&lt;/font&gt;" vertex="1">
           <mxGeometry height="140" width="300" x="60" y="1660" as="geometry" />
@@ -150,7 +156,7 @@
           <mxGeometry height="130" width="280" x="440" y="1740" as="geometry" />
         </mxCell>
         <mxCell id="note_rebind" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8eaf6;strokeColor=#3f51b5;fontSize=11;align=left;verticalAlign=top;" value="&lt;b&gt;🔄 onRebind 场景&lt;/b&gt;&lt;br&gt;&lt;hr&gt;如果 Service 已经 bind 过&lt;br&gt;且没有 unbind，再次 bindService&lt;br&gt;会调用 service.onRebind(intent)&lt;br&gt;而不是 onBind()&lt;br&gt;&lt;br&gt;onRebind 默认返回 void&lt;br&gt;需要 override 返回新的 IBinder&lt;/font&gt;" vertex="1">
-          <mxGeometry height="150" width="310" x="780" y="1800" as="geometry" />
+          <mxGeometry height="150" width="320" x="770" y="1800" as="geometry" />
         </mxCell>
         <mxCell id="arrow_step1a" edge="1" parent="1" source="step1_node" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="step1b_node">
           <mxGeometry relative="1" as="geometry" />
